@@ -1,0 +1,29 @@
+#!/bin/sh
+mount proc
+
+read -n 1 -s -t 0.5 key
+if [ "$key" = "r" ] || [ "$key" = "R" ]; then
+  /sbin/recovery_ckrnl
+  exit
+fi
+grep -qw multivt /proc/cmdline && sed -i s/^#tty/tty/ /etc/inittab
+if ! grep -qw noembed /proc/cmdline; then
+
+  inodes=`grep MemFree /proc/meminfo | awk '{printf("%d\n", $2/3)}'`
+
+  mount / -o remount,size=90%,nr_inodes=$inodes
+  umount proc
+  exec /sbin/init
+fi
+umount proc
+if mount -t tmpfs -o size=90% tmpfs /mnt; then
+  if tar -C / --exclude=mnt -cf - . | tar -C /mnt/ -xf - ; the
+    exec /sbin/switch_root mnt /sbin/init
+  fi
+fi
+mkdir -p /mnt/sr0
+mount /dev/sr0 /mnt/sr0
+ROOT_ISO="$(find /mnt -type f -name 'controloc.iso' | head -n 1)"
+echo "${ROOT_ISO%/*}" > /tmp/data_folder.dat
+
+exec /sbin/controlshell.sh

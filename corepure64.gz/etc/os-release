@@ -1,0 +1,10 @@
+NAME=ControlOC
+VERSION="v0.25"
+ID=ckrnl
+VERSION_ID=0.25
+PRETTY_NAME="Control OC v0.25"
+ANSI_COLOR="1;36"
+CPE_NAME="cpe:/o:krutoy_erali:control_oc:0.25"
+HOME_URL="https://controloc.vercel.app/"
+SUPPORT_URL="https://controloc.vercel.app/"
+BUG_REPORT_URL="https://controloc.vercel.app/"
