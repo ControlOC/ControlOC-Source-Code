@@ -1,0 +1,1 @@
+be5edbc4a00fdb41bd9e12c6c72b0618  libXft.tcz

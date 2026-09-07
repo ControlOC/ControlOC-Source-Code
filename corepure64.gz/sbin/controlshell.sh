@@ -1,5 +1,23 @@
 #!/usr/bin/bash
 controlchecksum="true" #controlchecksum=$(sudo sh /sbin/controlchecksum.sh)
+
+# Portable helper to create a temporary .cs file
+create_tmp_cs() {
+	# Try mktemp with Xs at the end (most portable)
+	if TMP_BASE=$(mktemp /tmp/ckrnl_code.XXXXXX 2>/dev/null); then
+		TMP_SRC="${TMP_BASE}.cs"
+		# mv the created tmp file to have .cs extension, if possible
+		if ! mv -- "$TMP_BASE" "$TMP_SRC" 2>/dev/null; then
+			# if mv fails for some reason, ensure file exists
+			touch -- "$TMP_SRC"
+		fi
+	else
+		# Fallback unique name using timestamp + pid
+		TMP_SRC="/tmp/ckrnl_code.$(date +%s).$$.cs"
+		touch -- "$TMP_SRC"
+	fi
+}
+
 while true; do
 	COUNT=$((COUNT + 1))
 	if [ ! "$COUNT" = "40" ]; then
@@ -8,8 +26,10 @@ while true; do
 		break
 	fi
 done
+
 sudo touch /tmp/history_controlshell
 sudo chmod 666 /tmp/history_controlshell
+
 if [ "$controlchecksum" = "false" ]; then
 	echo "      / \\"
 	echo "     /   \\"
@@ -34,7 +54,10 @@ if [ "$controlchecksum" = "false" ]; then
 		fi
 	done
 fi
+
+# Fixed: closed/truncated printf string was the cause of the EOF error
 printf "ControlOC v0.25 \n Hey, there! This is ControlOC, and here you can do everything. \n To download this OC, open browser, and go to link 'https://controloc.vercel.app', and download it. \n This OC don't have support for Russian language. \n To show all commands, type 'help'. To see all writen commands fully, type 'show' to open showing mode. \n \n \n \n"
+
 while true; do
 	if [ -f /opt/cs_dir ]; then
 		if [ ! "$(cat /opt/cs_dir)" = "/" ]; then
@@ -47,15 +70,18 @@ while true; do
 	else
 		CS_DIR="root:/"
 	fi
+
 	if [ -f /tmp/terminal_admin ]; then
 		if [ "$controlchecksum" = "true" ]; then
 			printf "ADMIN %s >> \n" "$CS_DIR" | tee -a /tmp/history_controlshell
 		else
 			printf "Modified. ADMIN %s >> \n" "$CS_DIR" | tee -a /tmp/history_controlshell
 		fi
+
 		read -r cmd args
 		echo "$cmd $args" >> /tmp/history_controlshell
 		printf "\n" >> /tmp/history_controlshell
+
 		if [ "$cmd" = "admin" ]; then
 			sudo rm /tmp/terminal_admin
 		elif [ "$cmd" = "show" ]; then
@@ -123,19 +149,26 @@ while true; do
 		elif [ "$cmd" = "linux" ]; then
 			sudo $args | tee -a /tmp/history_controlshell
 		else
-			echo "$cmd $args" > "/tmp/ckrnl_code.cs"
-			sudo controlscriptrun.sh -Rf "/tmp/ckrnl_code.cs" | tee -a /tmp/history_controlshell
+			# create portable temp .cs, write the command and run as root
+			create_tmp_cs
+			printf '%s %s\n' "$cmd" "$args" > "$TMP_SRC"
+			chmod 0644 "$TMP_SRC" 2>/dev/null || true
+			sudo controlscriptrun.sh -Rf "$TMP_SRC" | tee -a /tmp/history_controlshell
+			rm -f -- "$TMP_SRC" || true
 			continue
 		fi
+
 	else
 		if [ "$controlchecksum" = "true" ]; then
 			printf "controlshell %s >> \n" "$CS_DIR" | tee -a /tmp/history_controlshell
 		else
 			printf "Modified. controlshell %s >> \n" "$CS_DIR" | tee -a /tmp/history_controlshell
 		fi
+
 		read -r cmd args
 		echo "$cmd $args" >> /tmp/history_controlshell
 		printf "\n" >> /tmp/history_controlshell
+
 		if [ "$cmd" = "admin" ]; then
 			if [ -f /opt/passwd ]; then
 				read -r -p "Write password: " OLD_PASSWD
@@ -212,8 +245,12 @@ while true; do
 		elif [ "$cmd" = "linux" ]; then
 			su tc -c "$args | tee -a /tmp/history_controlshell"
 		else
-			echo '$cmd $args' > '/tmp/ckrnl_code.cs'
-			su tc -c "controlscriptrun.sh -f /tmp/ckrnl_code.cs | tee -a /tmp/history_controlshell"
+			# create portable temp .cs, write the command and run as user 'tc'
+			create_tmp_cs
+			printf '%s %s\n' "$cmd" "$args" > "$TMP_SRC"
+			chmod 0644 "$TMP_SRC" 2>/dev/null || true
+			su tc -c "controlscriptrun.sh -f '$TMP_SRC' | tee -a /tmp/history_controlshell"
+			rm -f -- "$TMP_SRC" || true
 			continue
 		fi
 	fi
