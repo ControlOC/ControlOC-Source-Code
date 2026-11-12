@@ -1,0 +1,24 @@
+Control OC
+Copyright (c) 2026 Control OC Project
+
+This product includes software developed by the Tiny Core Linux Project.
+The base system, including but not limited to the Linux kernel, busybox, 
+and Tiny Core extensions (.tcz), are licensed under the GNU General Public 
+License version 2 (GPLv2) and other open-source licenses.
+
+Source code for these components is available at:
+
+Busybox:
+http://tinycorelinux.net/14.x/x86_64/release/src/busybox
+
+Linux Kernel:
+http://tinycorelinux.net/14.x/x86_64/release/src/kernel/
+
+Toolchain:
+http://tinycorelinux.net/14.x/x86_64/release/src/toolchain/
+
+TCZ Packages:
+http://tinycorelinux.net/14.x/x86_64/tcz/src/
+
+Control OC is an independent project and is not affiliated with, 
+endorsed, or sponsored by the Tiny Core Linux Project.
