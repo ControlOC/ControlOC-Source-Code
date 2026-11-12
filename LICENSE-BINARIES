@@ -1,0 +1,12 @@
+Copyright (c) 2026 Control OC Project. All rights reserved.
+
+The binaries ckrnl_daemon, ckrnl_client, and apply_srp (the "Software") 
+are proprietary and confidential.
+
+Permission is hereby granted to use the Software solely as part of the 
+Control OC operating system distribution. You may not:
+1. Modify, reverse engineer, decompile, or disassemble the Software.
+2. Distribute, sublicense, or sell the Software separately from Control OC.
+3. Use the Software in any other operating system.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
