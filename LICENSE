@@ -1,0 +1,10 @@
+Control OC is distributed under an Open Core model.
+
+- Scripts, build tools, and GUI (creator.sh, CS/CSGUI, OneTheme, etc.) 
+  are licensed under the Apache License 2.0. See LICENSE-SCRIPTS.
+  
+- Core binaries (ckrnl_daemon, ckrnl_client, apply_srp) 
+  are proprietary and closed-source. See LICENSE-BINARIES.
+
+- Third-party components (Tiny Core Linux, busybox, etc.) 
+  are distributed under their respective licenses (GPLv2, etc.). See NOTICE.
